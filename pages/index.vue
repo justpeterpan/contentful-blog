@@ -1,32 +1,28 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">contentful-blog</h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
+  <div class="flex flex-col min-h-screen m-auto">
+    <section
+      v-for="post in posts"
+      :key="post.fields.slug"
+      class="flex flex-row px-2 py-2"
+    >
+      <h2>
+        <nuxt-link :to="post.fields.slug">{{ post.fields.title }}</nuxt-link>
+      </h2>
+    </section>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  computed: {
+    posts() {
+      return this.$store.state.posts
+    },
+  },
+  head: {
+    title: 'just a test',
+  },
+}
 </script>
 
 <style>
@@ -35,15 +31,6 @@ export default {}
 @apply min-h-screen flex justify-center items-center text-center mx-auto;
 }
 */
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
 .title {
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
