@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 dotenv.config()
+const contentful = require('contentful')
 
 export default {
   // Target: https://go.nuxtjs.dev/config-target
@@ -45,6 +46,8 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    // GraphQl Apollo Client
+    '@nuxtjs/apollo',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -57,6 +60,42 @@ export default {
     },
   },
 
+  apollo: {
+    includeNodeModules: true,
+    clientConfigs: {
+      default: {
+        httpEndpoint: `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE}?access_token=${process.env.CONTENTFUL_ACCESSTOKEN}`,
+      },
+    },
+  },
+
   // Build Configuration: https://go.nuxtjs.dev/config-build
+  /*
+   ** Build configuration
+   */
   build: {},
+
+  generate: {
+    routes: () => {
+      const client = contentful.createClient({
+        space: process.env.CONTENTFUL_ENVIRONMENT,
+        accessToken: process.env.CONTENTFUL_ACCESSTOKEN,
+      })
+
+      return client
+        .getEntries({
+          content_type: 'blogPost',
+        })
+        .then((response) => {
+          return response.items.map((entry) => {
+            return {
+              route: entry.fields.slug,
+              payload: entry,
+            }
+          })
+        })
+    },
+    dir: 'dist',
+    devtools: true,
+  },
 }
